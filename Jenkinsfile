@@ -1,3 +1,5 @@
+def docker_password = credentials('wuktyb-sywjop-3gugJo')
+
 pipeline{
 agent any
   
@@ -14,7 +16,9 @@ stages {
     stage ('dockerbuild'){
           steps{
             // tdd
-            echo 'dockerbuild -t test:1.0 .'
+            sh 'docker login -u vulcanos -p ${docker_password}'
+            sh 'docker build -t vulcanos/be-test:1.0 .'
+            sh 'docker push vulcanos/be-test:1.0'
           }
     }
     stage('deploy'){
