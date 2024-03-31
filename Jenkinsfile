@@ -14,7 +14,7 @@ stages {
     stage ('dockerbuild'){
           steps{
             // tdd
-            echo 'dockerbuild'
+            echo 'dockerbuild -t test:1.0 .'
           }
     }
     stage('deploy'){
