@@ -7,4 +7,4 @@ WORKDIR /app
 FROM gcr.io/distroless/java11-debian11:debug
 COPY --from=build-env /app /app
 WORKDIR /app
-ENTRYPOINT ["java", "-jar", "springstu-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "springbootstudy-1.0-SNAPSHOT.jar"]
