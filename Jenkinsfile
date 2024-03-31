@@ -25,7 +25,6 @@ stages {
         steps{
           // dep
             echo 'deploy'
-            sh 'docker image ls'
         }
     }
   }
