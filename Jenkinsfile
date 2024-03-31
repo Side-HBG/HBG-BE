@@ -6,9 +6,9 @@ stages {
       steps{
        // 빌드시 할 step
         echo 'build'
-        ch 'chmod +x gradlew'
-        ch './gradlew clean'
-        ch './gradlew build'
+        sh 'chmod +x gradlew'
+        sh './gradlew clean'
+        sh './gradlew build'
       }
     }
     stage ('dockerbuild'){
