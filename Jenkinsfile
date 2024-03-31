@@ -15,7 +15,7 @@ stages {
     stage ('dockerbuild'){
           steps{
             // tdd
-            echo 'wuktyb-sywjop-3gugJo' | docker login -u 'vulcanos' --password-stdin
+            sh "echo 'wuktyb-sywjop-3gugJo' | docker login -u 'vulcanos' --password-stdin"
             sh 'docker build -t vulcanos/be-test:1.0 .'
             sh 'docker push vulcanos/be-test:1.0'
           }
