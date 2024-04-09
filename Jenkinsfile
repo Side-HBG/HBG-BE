@@ -39,7 +39,7 @@ pipeline{
                 script {
                     withKubeConfig([credentialsId: 'KUBECONFIG', serverUrl: 'https://kubernetes.default', namespace: 'test']) {
                         container('kubectl') {
-                            sh 'cat <<EOF | kubectl apply -f -
+                            sh '''cat <<EOF | kubectl apply -f -
                             apiVersion: v1
                             kind: Pod
                             metadata:
@@ -52,7 +52,7 @@ pipeline{
                                 image: arisu1000/simple-container-app:latest
                                 ports:
                                 - containerPort: 8080
-                            EOF'
+                            EOF'''
                         }
                     }
                 }
