@@ -15,7 +15,7 @@ stages {
     stage ('dockerbuild'){
           steps{
             // tdd
-            app = docker.build("vulcanos/be-test") #Push Image 단계에서 빌드번호를 붙이기 때문에 옵션 제거
+            app = docker.build("vulcanos/be-test")
           }
     }
      stage('Push image') {
