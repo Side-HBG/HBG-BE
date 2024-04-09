@@ -24,9 +24,6 @@ pipeline{
             steps{
                 script{
                     // docker push
-                    withCredentials([string(credentialsId: 'docker-hub', variable: 'DOCKER_HUB')]) {
-                        sh "sudo docker login -u vulcanos -p ${DOCKER_HUB}"
-                    }
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub'){
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
