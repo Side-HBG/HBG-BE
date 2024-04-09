@@ -1,7 +1,10 @@
 
 pipeline{
+    environment{
+        registry = "vulcanos/be-test"
+        dockImage = ""
+    }
     agent any
-  
     stages {
         stage('build'){
             steps{
@@ -16,7 +19,7 @@ pipeline{
             steps{
                 script{
                     // docker build
-                    docker.build("vulcanos/be-test")
+                    dockImage = docker.build repository + ":${env.BUILD_NUMBER}"
                 }
             }
         }
@@ -25,8 +28,8 @@ pipeline{
                 script{
                     // docker push
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub'){
-                        app.push("${env.BUILD_NUMBER}")
-                        app.push("latest")
+                        docker.image(registry).push("${env.BUILD_NUMBER}")
+                        docker.image(registry).push("latest")
                     }
                 }
             }
