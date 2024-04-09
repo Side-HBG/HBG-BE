@@ -31,11 +31,5 @@ pipeline{
                 }
             }
         }
-        stage('deploy'){
-            steps{
-                // dep
-                echo 'deploy'
-            }
-        }
     }
 }
