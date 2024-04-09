@@ -14,12 +14,19 @@ pipeline{
         }
         stage ('dockerbuild'){
             steps{
-                // tdd
-                app = docker.build("vulcanos/be-test")
+                script{
+                    // docker build
+                    docker.build("vulcanos/be-test")
+                }
             }
         }
         stage('Push image') {
             steps{
+                script{
+                    // docker push
+                    withCredentials([string(credentialsId: 'docker-hub', variable: 'DOCKER_HUB')]) {
+                        sh "docker login -u vulcanos -p ${DOCKER_HUB}"
+                    }
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub'){
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
