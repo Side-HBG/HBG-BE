@@ -35,9 +35,27 @@ pipeline{
             }
         }
         stage('Deploy'){
-            steps{
-                // deploy
-                echo 'deploy'
+            steps {
+                script {
+                    withKubeConfig([credentialsId: 'KUBECONFIG', serverUrl: 'https://kubernetes.default', namespace: 'test']) {
+                        container('kubectl') {
+                            sh 'cat <<EOF | kubectl apply -f -
+                            apiVersion: v1
+                            kind: Pod
+                            metadata:
+                              name: kubernetes-simple-pod
+                              labels:
+                                app: kubernetes-simple-pod
+                            spec:
+                              containers:
+                              - name: kubernetes-simple-pod
+                                image: arisu1000/simple-container-app:latest
+                                ports:
+                                - containerPort: 8080
+                            EOF'
+                        }
+                    }
+                }
             }
         }
     }
