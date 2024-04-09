@@ -17,12 +17,8 @@ public class StreamService {
     final String appDataReqID = "https://store.steampowered.com/api/appdetails?appids=";
     public Product getStreamIDName(final String item_id){
         var varob = webService.get(appDataReqID+item_id);
-        System.out.println(varob.toString());
         var idData = varob.getJSONObject(item_id);
-        System.out.println(idData.toString());
         var data = idData.getJSONObject("data");
-        System.out.println(data.toString());
-
 
         try {
             // 이름
@@ -41,7 +37,7 @@ public class StreamService {
         }catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        throw  new ApiException(ErrorCode.INTER_SERVER_ERROR);
+        throw new ApiException(ErrorCode.INTER_SERVER_ERROR);
 
     }
 }
