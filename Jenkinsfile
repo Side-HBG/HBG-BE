@@ -15,11 +15,14 @@ stages {
     stage ('dockerbuild'){
           steps{
             // tdd
-            sh "echo 'wuktyb-sywjop-3gugJo' | sudo docker login -u 'vulcanos' --password-stdin"
-            sh 'sudo docker build -t vulcanos/be-test:1.0 .'
-            sh 'sudo docker push vulcanos/be-test:1.0'
+            app = docker.build("vulcanos/be-test") #Push Image 단계에서 빌드번호를 붙이기 때문에 옵션 제거
           }
     }
+     stage('Push image') {
+         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub'){
+             app.push("${env.BUILD_NUMBER}")
+             app.push("latest")
+     }
     stage('deploy'){
         steps{
           // dep
