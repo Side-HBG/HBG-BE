@@ -19,7 +19,7 @@ pipeline{
             steps{
                 script{
                     // docker build
-                    dockImage = docker.build repository + ":${env.BUILD_NUMBER}"
+                    dockImage = docker.build(registry + ":${env.BUILD_NUMBER}")
                 }
             }
         }
@@ -32,6 +32,12 @@ pipeline{
                         docker.image(registry).push("latest")
                     }
                 }
+            }
+        }
+        stage('Deploy'){
+            steps{
+                // deploy
+                echo 'deploy'
             }
         }
     }
