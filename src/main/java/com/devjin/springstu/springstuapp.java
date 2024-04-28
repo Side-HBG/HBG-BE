@@ -1,6 +1,5 @@
 package com.devjin.springstu;
 
-import com.sun.org.apache.xerces.internal.parsers.SecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

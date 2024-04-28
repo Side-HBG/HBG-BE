@@ -1,0 +1,28 @@
+package com.devjin.springstu.domain.controller;
+
+
+import com.devjin.springstu.domain.dto.response.ResStream.Price;
+import com.devjin.springstu.domain.service.StreamService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/steam")
+@RequiredArgsConstructor
+public class SteamController {
+    private final StreamService streamService;
+    @GetMapping
+    @ResponseBody
+    @RequestMapping("/price")
+    public Price getPrice(@RequestParam(value = "item_id") String item_id){
+       var result=  streamService.getStreamIDName(item_id);
+       return new Price(result.getName(),result.getInitial(),result.getDiscount_percent(),result.getPrice());
+    }
+
+    @GetMapping
+    @ResponseBody
+    @RequestMapping("/saveapplist")
+    public boolean getAppList(){
+        return streamService.saveAppList();
+    }
+}

@@ -2,7 +2,6 @@ package com.devjin.springstu.domain.VO;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @RequiredArgsConstructor
 @Getter

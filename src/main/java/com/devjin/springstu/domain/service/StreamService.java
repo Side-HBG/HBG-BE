@@ -2,25 +2,54 @@ package com.devjin.springstu.domain.service;
 
 import com.devjin.springstu.domain.Exception.ApiException;
 import com.devjin.springstu.domain.VO.Product;
-import com.devjin.springstu.domain.dto.response.ResStream;
+import com.devjin.springstu.domain.common.NumbericCheck;
 import com.devjin.springstu.domain.enums.ErrorCode;
+import com.devjin.springstu.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.var;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.ArrayList;
+
+import static com.devjin.springstu.domain.common.SteamApiURL.appDataReqID;
+import static com.devjin.springstu.domain.common.SteamApiURL.getAppList;
 
 @Service
 @RequiredArgsConstructor
 public class StreamService {
     private final WebService webService;
-    final String appDataReqID = "https://store.steampowered.com/api/appdetails?appids=";
+    private final ProductRepository productRepository;
+
+    public boolean saveAppList(){
+        var resultJob = webService.get(getAppList);
+        var applist = resultJob.getJSONObject("applist");
+        var apps = applist.getJSONArray("apps");
+   /*     apps.forEach(fe -> productRepository.save(new com.devjin.springstu.domain.entity
+                .Product(
+                        ((JSONObject)fe).getInt("appid")
+                        ,((JSONObject)fe).getString("name"))));*/
+
+        System.out.println("start");
+        var appEntityList = new ArrayList<com.devjin.springstu.domain.entity.Product>();
+        apps.forEach(fe-> appEntityList.add(new com.devjin.springstu.domain.entity
+                .Product(
+                ((JSONObject)fe).getInt("appid")
+                ,((JSONObject)fe).getString("name"))));
+        productRepository.saveAll(appEntityList);
+        return true;
+    }
     public Product getStreamIDName(final String item_id){
-        var varob = webService.get(appDataReqID+item_id);
-        var idData = varob.getJSONObject(item_id);
+
+        String value;
+        if(NumbericCheck.isNumberric(item_id)) value= item_id;
+        else value = String.valueOf(productRepository.findByName(item_id).get().getAppid());
+
+        var varob = webService.get(appDataReqID+value);
+        var idData = varob.getJSONObject(value);
         var data = idData.getJSONObject("data");
 
         try {
+            System.out.println(data.toString());
             // 이름
             var name = data.getString("name");
             // 가격표
@@ -31,8 +60,9 @@ public class StreamService {
             var discountPer  = price_overview.getInt("discount_percent");
             // 최종가격
             var price  = price_overview.getString("final_formatted");
-
+            // 할인없는 품목
             if(discountPer==0) nonDisPrice = price;
+
             return new Product(name,nonDisPrice,Integer.toString(discountPer),price);
         }catch (Exception e) {
             System.out.println(e.getMessage());
