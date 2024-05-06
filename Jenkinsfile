@@ -2,8 +2,8 @@
 pipeline{
     environment{
         // 환경변수
-        DOCKER_REGISTRY = 'vulcanos'
-        DOCKER_REPO = 'hbg-be'
+        DOCKER_REGISTRY = 'docker.io'
+        DOCKER_REPO = 'vulcanos/hbg-be'
     }
     agent any
     stages {
@@ -19,7 +19,7 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}/${DOCKER_REPO}")
+                    dockerImage = docker.build("${DOCKER_REPO}")
                 }
             }
         }
