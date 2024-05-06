@@ -25,9 +25,6 @@ public class WebService {
     public JSONObject get(final String requestUrl){
         CloseableHttpClient client = HttpClientBuilder.create().build();
         HttpGet getrequest = new HttpGet(requestUrl);
-
-        // addHeader --
-
         try {
             CloseableHttpResponse response = client.execute(getrequest);
             if(response.getCode() == 200){

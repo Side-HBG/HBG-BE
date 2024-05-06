@@ -24,10 +24,6 @@ public class StreamService {
         var resultJob = webService.get(getAppList);
         var applist = resultJob.getJSONObject("applist");
         var apps = applist.getJSONArray("apps");
-   /*     apps.forEach(fe -> productRepository.save(new com.devjin.springstu.domain.entity
-                .Product(
-                        ((JSONObject)fe).getInt("appid")
-                        ,((JSONObject)fe).getString("name"))));*/
 
         System.out.println("start");
         var appEntityList = new ArrayList<com.devjin.springstu.domain.entity.Product>();
@@ -35,7 +31,13 @@ public class StreamService {
                 .Product(
                 ((JSONObject)fe).getInt("appid")
                 ,((JSONObject)fe).getString("name"))));
+
+        System.out.println("entity list end");
+        productRepository.save(appEntityList.getFirst());
+        appEntityList.remove(0);
+        System.out.println("first init end");
         productRepository.saveAll(appEntityList);
+        System.out.println("save end");
         return true;
     }
     public Product getStreamIDName(final String item_id){

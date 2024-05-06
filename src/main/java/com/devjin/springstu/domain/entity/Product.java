@@ -1,10 +1,7 @@
 package com.devjin.springstu.domain.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
 @Getter
@@ -28,6 +25,7 @@ public class Product {
 
     @Id
     @Column(name = COL_APPID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int appid;
 
     @Column(name = COL_NAME)
