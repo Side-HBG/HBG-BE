@@ -3,7 +3,7 @@ pipeline{
     environment{
         // 환경변수
         DOCKER_REGISTRY = 'docker.io'
-        DOCKER_REPO = 'vulcanos/hbg-be'
+        DOCKER_REPO = 'vulcanos/hgb-be'
     }
     agent any
     stages {
