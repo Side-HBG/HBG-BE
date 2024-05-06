@@ -35,35 +35,36 @@ pipeline{
         stage('deploy'){
             steps{
                 script{
-                    sh "cat <<EOF | kubectl apply -f -  \n
-                    apiVersion: apps/v1 \n
-                    kind: Deployment \n
-                    metadata: \n
-                      name: test-deploy \n
-                      namespace: test-backend   \n
-                    spec:   \n
-                      replicas: 1   \n
-                      selector:  \n
-                        matchLabels:\n
-                          app: test\n
-                      template:\n
-                        metadata:\n
-                          labels:\n
-                            app: test\n
-                        spec:\n
-                          containers:\n
-                          - name: test\n
-                            image: ${DOCKER_REPO}:${env.BUILD_NUMBER}\n
-                            resources:\n
-                              requests:\n
-                                memory: "400Mi"\n
-                                cpu: "1000m"\n
-                              limits:\n
-                                memory: "4000Mi"\n
-                                cpu: "3000m"\n
-                            ports:\n
-                              - name: http-port\n
-                                containerPort: 80"
+                    sh """cat <<EOF | kubectl apply -f -
+                    apiVersion: apps/v1
+                    kind: Deployment
+                    metadata:
+                      name: test-deploy
+                      namespace: test-backend
+                    spec:
+                      replicas: 1
+                      selector:
+                        matchLabels:
+                          app: test
+                      template:
+                        metadata:
+                          labels:
+                            app: test
+                        spec:
+                          containers:
+                          - name: test
+                            image: ${DOCKER_REPO}:${env.BUILD_NUMBER}
+                            resources:
+                              requests:
+                                memory: "400Mi"
+                                cpu: "1000m"
+                              limits:
+                                memory: "4000Mi"
+                                cpu: "3000m"
+                            ports:
+                              - name: http-port
+                                containerPort: 80
+                    EOF"""
                 }
             }
         }
