@@ -2,7 +2,8 @@
 pipeline{
     environment{
         // 환경변수
-        DOCKER_REGISTRY = 'hbg-be'
+        DOCKER_REGISTRY = 'vulcanos'
+        DOCKER_REPO = 'hbg-be'
     }
     agent any
     stages {
@@ -18,7 +19,7 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}/${DOCKER_REPO}")
                 }
             }
         }
@@ -26,7 +27,8 @@ pipeline{
             steps{
                 script{
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential'){
-                        dockerImage.push()
+                        dockerImage.push("${env.BUILD_NUMBER}")
+                        dockerImage.push("latest")
                     }
                 }
             }
