@@ -1,6 +1,7 @@
 
 pipeline{
     agent any
+    checkout scm
     stages {
         stage('build'){
             steps{
@@ -11,13 +12,13 @@ pipeline{
                 sh './gradlew build'
             }
         }
-        stage ('test'){
-            agent { dockerfile true }
+        stage ('docker-build'){
             steps{
-                // 테스트시 할 step
-                echo 'test'
-                sh 'java --version'
+                // 도커 빌드시 할 step
+                echo 'docker-build'
+                sh 'docker build -t hbg-be .'
             }
         }
+
     }
 }
