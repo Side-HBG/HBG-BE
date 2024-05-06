@@ -35,7 +35,7 @@ pipeline{
         stage('deploy'){
             steps{
                 script{
-                    sh "kubectl get pod -n default"
+                    sh "kubectl apply -f deployment.yaml"
                 }
             }
         }
