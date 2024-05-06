@@ -1,5 +1,9 @@
 
 pipeline{
+    environment{
+        // 환경변수
+        DOCKER_REGISTRY = 'hbg-be'
+    }
     agent any
     stages {
         stage('build'){
@@ -13,9 +17,9 @@ pipeline{
         }
         stage ('docker-build'){
             steps{
-                // 도커 빌드시 할 step
-                echo 'docker-build'
-                sh 'docker build -t hbg-be .'
+                script{
+                    dockerImage = docker.build("${DOCKER_REGISTRY}:${BUILD_NUMBER}")
+                }
             }
         }
 
