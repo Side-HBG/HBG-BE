@@ -1,5 +1,5 @@
 FROM openjdk:21-jdk-slim-bullseye AS build-env
-COPY springbootstudy-1.0-SNAPSHOT.jar /app/
+COPY build/libs/springbootstudy-1.0-SNAPSHOT.jar /app/
 WORKDIR /app
 
 
