@@ -35,36 +35,7 @@ pipeline{
         stage('deploy'){
             steps{
                 script{
-                    sh """cat <<EOF | kubectl apply -f -
-                    apiVersion: apps/v1
-                    kind: Deployment
-                    metadata:
-                      name: test-deploy
-                      namespace: test-backend
-                    spec:
-                      replicas: 1
-                      selector:
-                        matchLabels:
-                          app: test
-                      template:
-                        metadata:
-                          labels:
-                            app: test
-                        spec:
-                          containers:
-                          - name: test
-                            image: ${DOCKER_REPO}:${env.BUILD_NUMBER}
-                            resources:
-                              requests:
-                                memory: "400Mi"
-                                cpu: "1000m"
-                              limits:
-                                memory: "4000Mi"
-                                cpu: "3000m"
-                            ports:
-                              - name: http-port
-                                containerPort: 80
-                    EOF"""
+                    sh "kubectl apply -f deployment.yaml"
                 }
             }
         }
