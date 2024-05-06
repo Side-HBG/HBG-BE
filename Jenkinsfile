@@ -36,7 +36,7 @@ pipeline{
         stage('deploy'){
             steps{
                 script{
-                    kubernetesDeploy(configs: "deployment.yaml")
+                    sh "kubectl get all"
                 }
             }
         }
