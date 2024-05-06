@@ -24,11 +24,8 @@ public class Product {
     }
 
     @Id
-    @Column(name = "NUM")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int num;
-
     @Column(name = COL_APPID)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private int appid;
 
     @Column(name = COL_NAME)
