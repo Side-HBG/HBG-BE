@@ -12,7 +12,6 @@ pipeline{
                 // 빌드시 할 step
                 echo 'build'
                 sh 'chmod +x gradlew'
-                sh './gradlew clean'
                 sh './gradlew build'
             }
         }
@@ -36,7 +35,7 @@ pipeline{
         stage('deploy'){
             steps{
                 script{
-                    sh "kubectl get all"
+                    sh "kubectl get pod -n default"
                 }
             }
         }
