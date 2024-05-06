@@ -33,6 +33,12 @@ pipeline{
                 }
             }
         }
-
+        stage('deploy'){
+            steps{
+                script{
+                    kubeapply(configFile: 'k8s/deployment.yaml')
+                }
+            }
+        }
     }
 }
