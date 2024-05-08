@@ -17,15 +17,20 @@ public class Product {
 
     }
 
-    public Product(int _appid,String _name)
+    public Product(int _appid,String _name,Integer _num)
     {
+        if(_num!=null) num=_num;
         this.appid = _appid;
         this.name = _name;
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "num")
+    private int num;
+
+
     @Column(name = COL_APPID)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int appid;
 
     @Column(name = COL_NAME)

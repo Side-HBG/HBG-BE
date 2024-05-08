@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static com.devjin.springstu.domain.common.SteamApiURL.appDataReqID;
 import static com.devjin.springstu.domain.common.SteamApiURL.getAppList;
@@ -24,17 +25,25 @@ public class StreamService {
         var resultJob = webService.get(getAppList);
         var applist = resultJob.getJSONObject("applist");
         var apps = applist.getJSONArray("apps");
-/*        apps.forEach(fe -> productRepository.save(new com.devjin.springstu.domain.entity
-                .Product(
-                        ((JSONObject)fe).getInt("appid")
-                        ,((JSONObject)fe).getString("name"))));*/
+
         System.out.println("start");
+
+        var realData = productRepository.findAll();
+        var realappId = realData.stream().map(mp-> mp.getAppid()).toList();
+
         var appEntityList = new ArrayList<com.devjin.springstu.domain.entity.Product>();
         apps.forEach(fe-> appEntityList.add(new com.devjin.springstu.domain.entity
                 .Product(
                 ((JSONObject)fe).getInt("appid")
-                ,((JSONObject)fe).getString("name"))));
-        productRepository.saveAll(appEntityList);
+                ,((JSONObject)fe).getString("name"),
+                realappId.contains(((JSONObject)fe).getInt("appid"))
+                        ? realData.stream().filter(fl-> fl.getAppid() ==((JSONObject)fe).getInt("appid") )
+                                .findFirst()
+                                .orElseThrow(()->  new ApiException(ErrorCode.INTER_SERVER_ERROR)).getNum() : null
+                )));
+        var result = appEntityList.stream().filter(fl-> !fl.getName().isBlank()).toList();
+
+        productRepository.saveAll(result);
         return true;
     }
     public Product getStreamIDName(final String item_id){
