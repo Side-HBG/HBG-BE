@@ -25,7 +25,7 @@ public class Product {
 
     @Id
     @Column(name = COL_APPID)
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int appid;
 
     @Column(name = COL_NAME)
