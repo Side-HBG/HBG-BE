@@ -36,7 +36,7 @@ pipeline{
                         dockerImage.push("${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
-                    sh 'docker rmi -f `docker images --filter=reference="${DOCKER_REPO}/*"  -q`'
+                    sh 'docker rmi -f \`docker images --filter=reference="${DOCKER_REPO}/*"  -q\`'
                 }
             }
         }
