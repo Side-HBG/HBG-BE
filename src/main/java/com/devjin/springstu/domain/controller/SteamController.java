@@ -11,17 +11,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SteamController {
     private final StreamService streamService;
-    @GetMapping
-    @ResponseBody
-    @RequestMapping("/price")
+    @GetMapping("/price")
     public Price getPrice(@RequestParam(value = "item_id") String item_id){
        var result=  streamService.getStreamIDName(item_id);
        return new Price(result.getName(),result.getInitial(),result.getDiscount_percent(),result.getPrice());
     }
 
-    @GetMapping
-    @ResponseBody
-    @RequestMapping("/saveapplist")
+    @GetMapping("/saveapplist")
     public boolean getAppList(){
         return streamService.saveAppList();
     }
