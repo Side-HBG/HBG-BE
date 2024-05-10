@@ -18,7 +18,7 @@ pipeline{
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube server') {
-                    sh "./gradlew sonar"
+                    sh "./gradlew sonar --warning-mode all -Dorg.gradle.debug=true --no-daemon"
                 }
             }
         }
@@ -44,7 +44,9 @@ pipeline{
                         dockerImage.push("${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
-                    sh 'docker rmi -f ${DOCKER_REGISTRY}'
+                    sh '''
+                        docker rmi -f `docker images --filter=reference="vulcanos/*"  -q`
+                    '''
                 }
             }
         }
