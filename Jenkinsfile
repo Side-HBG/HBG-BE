@@ -7,6 +7,11 @@ pipeline{
     }
     agent any
     stages {
+            stage('SonarQube Analysis') {
+                withSonarQubeEnv() {
+                    sh "./gradlew sonar"
+                w}
+        }
         stage('build'){
             steps{
                 // 빌드시 할 step
