@@ -2,8 +2,7 @@
 pipeline{
     environment{
         // 환경변수
-        DOCKER_REGISTRY = 'docker.io'
-        DOCKER_REPO = 'vulcanos/hgb-be'
+        DOCKER_REGISTRY = 'vulcanos/hgb-be'
     }
     agent any
     stages {
@@ -25,7 +24,7 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REPO}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}")
                 }
             }
         }
@@ -36,8 +35,7 @@ pipeline{
                         dockerImage.push("${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
-                    sh 'docker rmi -f ${DOCKER_REPO}:${env.BUILD_NUMBER}'
-                    sh 'docker rmi -f ${DOCKER_REPO}:latest'
+                    sh 'docker rmi -f ${DOCKER_REGISTRY}'
                 }
             }
         }
@@ -45,7 +43,11 @@ pipeline{
         stage('deploy'){
             steps{
                 script{
-                    sh "kubectl apply -f deployment.yaml"
+                    sh '''
+                        kubectl apply -f k8s-yaml/deployment.yaml
+                        kubectl apply -f k8s-yaml/service.yaml
+                        kubectl rollout restart -n `cat k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'
+                    '''
                 }
             }
         }
