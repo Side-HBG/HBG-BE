@@ -7,10 +7,10 @@ pipeline{
     }
     agent any
     stages {
-            stage('SonarQube Analysis') {
-                withSonarQubeEnv() {
-                    sh "./gradlew sonar"
-                w}
+        stage('SonarQube Analysis') {
+            withSonarQubeEnv() {
+                sh "./gradlew sonar"
+            }
         }
         stage('build'){
             steps{
