@@ -3,6 +3,8 @@ pipeline{
     environment{
         // 환경변수
         DOCKER_REGISTRY = 'vulcanos/hgb-be'
+        NAMESPACE = 'hgb-be'
+        DEPLOYMENT = 'hgb-backend-deploy'
     }
     agent any
     stages {
@@ -53,7 +55,7 @@ pipeline{
                     sh '''
                         kubectl apply -f k8s-yaml/deployment.yaml
                         kubectl apply -f k8s-yaml/service.yaml
-                        kubectl rollout restart -n `cat k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'
+                        kubectl rollout restart -n `cat k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'`
                     '''
                 }
             }
