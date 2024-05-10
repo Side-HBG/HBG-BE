@@ -18,7 +18,7 @@ pipeline{
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube server') {
-                    sh "./gradlew sonar --warning-mode all -Dorg.gradle.debug=true --no-daemon"
+                    sh "./gradlew sonar --warning-mode all"
                 }
             }
         }
