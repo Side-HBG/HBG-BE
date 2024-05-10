@@ -45,7 +45,7 @@ pipeline{
                         dockerImage.push("latest")
                     }
                     sh '''
-                        docker rmi -f `docker images --filter=reference="vulcanos/*"  -q`
+                        docker system prune -f
                     '''
                 }
             }
