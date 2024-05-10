@@ -6,6 +6,13 @@ pipeline{
     }
     agent any
     stages {
+        stage('build test') {
+            steps {
+                // 테스트시 할 step
+                echo 'build test'
+                sh './gradlew test'
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube server') {
