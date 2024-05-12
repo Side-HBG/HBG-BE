@@ -6,15 +6,18 @@ import com.devjin.springstu.domain.service.SteamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/steam")
 @RequiredArgsConstructor
 public class SteamController {
     private final SteamService streamService;
     @GetMapping("/price")
-    public Price getPrice(@RequestParam(value = "item_id") String item_id){
+    public List<Price> getPrice(@RequestParam(value = "item_id") String item_id){
        var result=  streamService.getStreamIDName(item_id);
-       return new Price(result.getName(),result.getInitial(),result.getDiscount_percent(),result.getPrice());
+
+       return result.stream().filter(mp-> mp !=null).map(mp-> new Price(mp.getName(),mp.getType(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice())).toList();
     }
 
     @GetMapping("/saveapplist")
