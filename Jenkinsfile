@@ -37,6 +37,16 @@ pipeline{
                 }
             }
         }
+        stage ('vulerability-scan'){
+            steps{
+                agent trivy
+                script{
+                    sh '''
+                        trivy ${DOCKER_REGISTRY}:${env.BUILD_NUMBER}
+                    '''
+                }
+            }
+        }
         stage('docker-push'){
             steps{
                 script{
