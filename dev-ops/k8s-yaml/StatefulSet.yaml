@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: hgb-backend-deploy
-  namespace: hgb-backend
+  namespace: hgb-backend-test
 spec:
   selector:
     matchLabels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: test
-          image: vulcanos/hgb-be:latest
+          image: vulcanos/hgb-be-test:latest
           imagePullPolicy: Always
           resources:
             requests:
