@@ -40,7 +40,7 @@ pipeline{
         stage ('vulerability-scan'){
             steps{
                 script{
-                    sh 'sh "bash trivy-image-scan.sh"'
+                    sh 'sh ./trivy-image-scan.sh'
                 }
             }
         }
