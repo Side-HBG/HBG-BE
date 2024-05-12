@@ -40,6 +40,10 @@ pipeline{
         stage ('vulerability-scan'){
             steps{
                 script{
+                    sh '''
+                       pwd
+                       ls -al
+                    '''
                     sh 'sh ./trivy-image-scan.sh'
                 }
             }
