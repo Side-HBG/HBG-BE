@@ -33,14 +33,14 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}-test")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}")
                 }
             }
         }
         stage ('vulerability-scan'){
             steps{
                 script{
-                    sh 'sh ./dev-ops/trivy-image-scan.sh ${DOCKER_REGISTRY}-test'
+                    sh 'sh ./dev-ops/trivy-image-scan.sh ${DOCKER_REGISTRY}'
                 }
             }
         }
@@ -58,16 +58,16 @@ pipeline{
             }
         }
 
-//         stage('deploy'){
-//             steps{
-//                 script{
-//                     sh '''
-//                         kubectl apply -f ./dev-ops/k8s-yaml/deployment.yaml
-//                         kubectl apply -f ./dev-ops/k8s-yaml/service.yaml
-//                         kubectl rollout restart -n `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'`
-//                     '''
-//                 }
-//             }
-//         }
+        stage('deploy'){
+            steps{
+                script{
+                    sh '''
+                        kubectl apply -f ./dev-ops/k8s-yaml/deployment.yaml
+                        kubectl apply -f ./dev-ops/k8s-yaml/service.yaml
+                        kubectl rollout restart -n `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'`
+                    '''
+                }
+            }
+        }
     }
 }
