@@ -37,7 +37,7 @@ public class ResponseMessage {
 
 
     public static final String STEAM_NOT_FONUD_APPNAME = "STEAM_NOT_FOUND_APPNAME";
-
+    public static final String STEAM_NOT_INVAILD_JSON_STRING = "STEAM_NOT_INVAILD_JSON_STRING";
 
     /*
     OK Code
