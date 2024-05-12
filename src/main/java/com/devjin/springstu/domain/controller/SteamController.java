@@ -2,7 +2,7 @@ package com.devjin.springstu.domain.controller;
 
 
 import com.devjin.springstu.domain.dto.response.ResStream.Price;
-import com.devjin.springstu.domain.service.StreamService;
+import com.devjin.springstu.domain.service.SteamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/steam")
 @RequiredArgsConstructor
 public class SteamController {
-    private final StreamService streamService;
+    private final SteamService streamService;
     @GetMapping("/price")
     public Price getPrice(@RequestParam(value = "item_id") String item_id){
        var result=  streamService.getStreamIDName(item_id);

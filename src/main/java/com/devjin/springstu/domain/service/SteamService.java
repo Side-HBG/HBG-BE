@@ -10,14 +10,13 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 import static com.devjin.springstu.domain.common.SteamApiURL.appDataReqID;
 import static com.devjin.springstu.domain.common.SteamApiURL.getAppList;
 
 @Service
 @RequiredArgsConstructor
-public class StreamService {
+public class SteamService {
     private final WebService webService;
     private final ProductRepository productRepository;
 
@@ -50,7 +49,7 @@ public class StreamService {
 
         String value;
         if(NumbericCheck.isNumberric(item_id)) value= item_id;
-        else value = String.valueOf(productRepository.findByName(item_id).get().getAppid());
+        else value = String.valueOf(productRepository.findByName(item_id).orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME)).getAppid());
 
         var varob = webService.get(appDataReqID+value);
         var idData = varob.getJSONObject(value);
