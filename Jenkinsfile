@@ -38,13 +38,10 @@ pipeline{
             }
         }
         stage ('vulerability-scan'){
+            agent {
+                label 'trivy'
+            }
             steps{
-                agent {
-                    docker {
-                        image 'aquasec/trivy'
-                        args '-v /var/run/docker.sock:/var/run/docker.sock'
-                    }
-                }
                 script{
                     sh '''
                         trivy ${DOCKER_REGISTRY}:${env.BUILD_NUMBER}
