@@ -5,6 +5,7 @@ pipeline{
         DOCKER_REGISTRY = 'vulcanos/hgb-be-test'
         NAMESPACE = 'hgb-be'
         DEPLOYMENT = 'hgb-backend-deploy'
+        K8S_PATH = './dev-ops/k8s-develop/'
     }
     agent any
     stages {
@@ -48,7 +49,7 @@ pipeline{
             steps{
                 script{
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential'){
-                        dockerImage.push("${env.BUILD_NUMBER}")
+                        dockerImage.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
                     sh '''
@@ -62,8 +63,7 @@ pipeline{
             steps{
                 script{
                     sh '''
-                        kubectl apply -f ./dev-ops/k8s-yaml/StatefulSet.yaml
-                        kubectl apply -f ./dev-ops/k8s-yaml/service.yaml
+                        kubectl apply -f ${K8S_PATH}
                     '''
                 }
             }
