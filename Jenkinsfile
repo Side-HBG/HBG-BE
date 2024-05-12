@@ -33,7 +33,7 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}-test")
                 }
             }
         }
