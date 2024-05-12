@@ -52,7 +52,7 @@ pipeline{
                         dockerImage.push("latest")
                     }
                     sh '''
-                        docker system prune -f
+                        docker system prune -f --all
                     '''
                 }
             }
