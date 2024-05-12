@@ -38,14 +38,9 @@ pipeline{
             }
         }
         stage ('vulerability-scan'){
-            agent {
-                label 'trivy'
-            }
             steps{
                 script{
-                    sh '''
-                        trivy ${DOCKER_REGISTRY}:${env.BUILD_NUMBER}
-                    '''
+                    sh 'sh "bash trivy-image-scan.sh"'
                 }
             }
         }
