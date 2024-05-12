@@ -58,16 +58,16 @@ pipeline{
             }
         }
 
-        stage('deploy'){
-            steps{
-                script{
-                    sh '''
-                        kubectl apply -f ./dev-ops/k8s-yaml/deployment.yaml
-                        kubectl apply -f ./dev-ops/k8s-yaml/service.yaml
-                        kubectl rollout restart -n `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'`
-                    '''
-                }
-            }
-        }
+//         stage('deploy'){
+//             steps{
+//                 script{
+//                     sh '''
+//                         kubectl apply -f ./dev-ops/k8s-yaml/deployment.yaml
+//                         kubectl apply -f ./dev-ops/k8s-yaml/service.yaml
+//                         kubectl rollout restart -n `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }'` deployment `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}'`
+//                     '''
+//                 }
+//             }
+//         }
     }
 }
