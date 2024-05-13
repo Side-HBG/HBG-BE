@@ -5,6 +5,8 @@ pipeline{
         DOCKER_REGISTRY = 'vulcanos/hgb-be'
         NAMESPACE = 'hgb-be'
         DEPLOYMENT = 'hgb-backend-deploy'
+        K8S_PATH = './dev-ops/k8s/'
+        BRANCH_NAME = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
     }
     agent any
     stages {
@@ -48,7 +50,7 @@ pipeline{
             steps{
                 script{
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential'){
-                        dockerImage.push("${env.BUILD_NUMBER}")
+                        dockerImage.push("${BRANCH_NAME}")
                         dockerImage.push("latest")
                     }
                     sh '''
@@ -62,9 +64,7 @@ pipeline{
             steps{
                 script{
                     sh '''
-                        kubectl apply -f ./dev-ops/k8s-yaml/deployment.yaml
-                        kubectl apply -f ./dev-ops/k8s-yaml/service.yaml
-                        kubectl rollout restart -n `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '/namespace/{ print $2 }' | head -1` deployment `cat ./dev-ops/k8s-yaml/deployment.yaml| awk '$1 == "name:" { print $2}' | head -1`
+                        kubectl apply -f ${K8S_PATH}
                     '''
                 }
             }
