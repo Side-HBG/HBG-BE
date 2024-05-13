@@ -2,10 +2,10 @@
 pipeline{
     environment{
         // 환경변수
-        DOCKER_REGISTRY = 'vulcanos/hgb-be-test'
+        DOCKER_REGISTRY = 'vulcanos/hgb-be'
         NAMESPACE = 'hgb-be'
         DEPLOYMENT = 'hgb-backend-deploy'
-        K8S_PATH = './dev-ops/k8s-develop/'
+        K8S_PATH = './dev-ops/k8s/'
         BRANCH_NAME = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
     }
     agent any
