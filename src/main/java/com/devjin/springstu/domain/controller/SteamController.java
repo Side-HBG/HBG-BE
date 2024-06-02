@@ -22,7 +22,6 @@ public class SteamController {
     @GetMapping("/pricev2")
     public List<Price> getPriceV2(@RequestParam(value = "item_id") String item_id){
         var result=  streamService.getStreamIDNameV2(item_id);
-
         return result.stream().filter(mp-> mp !=null).map(mp-> new Price(mp.getName(),mp.getType(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice())).toList();
     }
 
@@ -31,8 +30,13 @@ public class SteamController {
         return streamService.saveAppList();
     }
 
+    @GetMapping("/saveProductPriceDetail")
+    public boolean saveProductPriceDetail(){
+        return streamService.saveProductPriceDetail();
+    }
+
     @GetMapping("/saveProductPriceInfo")
-    public boolean saveProductPriceInfo(){
-        return streamService.saveProductPriceInfo();
+    public boolean saveProductPriceInfo() {
+        return streamService.saveProductPriceinfo();
     }
 }

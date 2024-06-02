@@ -27,7 +27,7 @@ public class ProductPriceInfo {
     public static final String COL_UPDATETIME = "UPDATETIME";
 
     public ProductPriceInfo(final String type, final boolean isfree
-            , final String initial, final String discountpersent, final String price,final LocalDateTime updatetime, final Product prod)
+            , final String initial, final String discountpersent, final String price,final LocalDateTime updatetime, final Product prod, final Integer num)
     {
         this.type = type;
         this.isfree = isfree;
@@ -36,10 +36,11 @@ public class ProductPriceInfo {
         this.price = price;
         this.product = prod;
         this.updatetime=updatetime;
+        if(num !=null) this.num = num;
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "num")
     private int num;
 

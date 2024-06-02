@@ -7,7 +7,7 @@ WORKDIR /app
 FROM gcr.io/distroless/java21-debian12:debug
 COPY --from=build-env /app /app
 WORKDIR /app
-ENTRYPOINT ["java", "-jar", "springbootstudy-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "springbootstudy-1.1-SNAPSHOT.jar"]
 
 ENV HGB_JDBC_HOST=localhost
 ENV HGB_JDBC_PORT=5432
