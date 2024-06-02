@@ -20,8 +20,7 @@ import java.util.Arrays;
 @RestControllerAdvice
 public class GlobalExceptionController {
     @ExceptionHandler(ApiException.class)
-    public ErrorCode handleApiException(ApiException ex) {
-        return ex.getErrorCode();}
+    public ErrorCode handleApiException(ApiException ex) {return ex.getErrorCode();}
     @ExceptionHandler(Exception.class)
     public ErrorCode handleException(Exception ex) {
 

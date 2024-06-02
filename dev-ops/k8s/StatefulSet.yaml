@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hgb-backend-deploy
+  namespace: hgb-backend
+spec:
+  selector:
+    matchLabels:
+      app: hgb-backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hgb-backend
+    spec:
+      containers:
+        - name: test
+          image: vulcanos/hgb-be:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"
+            limits:
+              memory: "1Gi"
+              cpu: "3000m"
+          ports:
+            - name: http-port
+              containerPort: 80
+          envFrom:
+            - secretRef:
+                name: hgb-server-secret
+  serviceName: hgb-backend-svc
