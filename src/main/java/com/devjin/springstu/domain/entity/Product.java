@@ -9,6 +9,7 @@ import lombok.Getter;
 public class Product {
 
     public static final String TABLE_NAME = "PRODUCT";
+    public static final String COL_ID = "NUM";
     public static final String COL_APPID = "APPID";
     public static final String COL_NAME = "NAME";
 
@@ -26,7 +27,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "num")
+    @Column(name = COL_ID)
     private int num;
 
 

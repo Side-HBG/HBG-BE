@@ -3,12 +3,17 @@ package com.devjin.springstu.domain.service;
 import com.devjin.springstu.domain.Exception.ApiException;
 import com.devjin.springstu.domain.VO.ProductPrice;
 import com.devjin.springstu.domain.common.NumbericCheck;
+import com.devjin.springstu.domain.entity.Product;
+import com.devjin.springstu.domain.entity.ProductPriceInfo;
 import com.devjin.springstu.domain.enums.ErrorCode;
+import com.devjin.springstu.domain.repository.ProductPriceInfoRepository;
 import com.devjin.springstu.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +25,7 @@ import static com.devjin.springstu.domain.common.SteamApiURL.getAppList;
 public class SteamService {
     private final WebService webService;
     private final ProductRepository productRepository;
+    private final ProductPriceInfoRepository productPriceInfoRepository;
 
     public boolean saveAppList(){
         var resultJob = webService.get(getAppList);
@@ -37,15 +43,22 @@ public class SteamService {
                 ((JSONObject)fe).getInt("appid")
                 ,((JSONObject)fe).getString("name").toUpperCase(),
                 realappId.contains(((JSONObject)fe).getInt("appid"))
-                        ? realData.stream().filter(fl-> fl.getAppid() ==((JSONObject)fe).getInt("appid") )
-                                .findFirst()
-                                .orElseThrow(()->  new ApiException(ErrorCode.INTER_SERVER_ERROR)).getNum() : null
+                        ? getAppid((JSONObject) fe, realData) : null
                 )));
         var result = appEntityList.stream().filter(fl-> !fl.getName().isBlank()).toList();
 
         productRepository.saveAll(result);
+        System.out.println("end");
         return true;
     }
+
+    private static int getAppid(JSONObject fe, List<Product> realData) {
+        var data = realData.stream().filter(fl -> fl.getAppid() == fe.getInt("appid"))
+                .findFirst()
+                .orElseThrow(() -> new ApiException(ErrorCode.INTER_SERVER_ERROR)).getNum();
+        return data;
+    }
+
     public ProductPrice getJsonToPriceProduct(final String item_id)
     {
         try {
@@ -84,6 +97,23 @@ public class SteamService {
     }
 
 
+    public boolean saveProductPriceInfo(){
+        var datas = productRepository.findAll();
+        datas.stream().forEach(mp->{
+            var productPrice = getJsonToPriceProduct(String.valueOf(mp.getAppid()));
+            if (productPrice.getName() == null) return;
+            var priceinfo = new ProductPriceInfo(productPrice.getType(),productPrice.is_free(),productPrice.getInitial()
+            ,productPrice.getDiscount_percent(),productPrice.getPrice(), LocalDateTime.now(),mp);
+            productPriceInfoRepository.save(priceinfo);
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return true;
+    }
+
     public List<ProductPrice> getStreamIDName(final String item_id){
 
         List<String> values = getItem_IDs(item_id);
@@ -95,12 +125,27 @@ public class SteamService {
         });
         return result;
     }
+    public List<ProductPrice> getStreamIDNameV2(final String item_id){
+
+        List<String> values = getItem_IDs(item_id);
+        List<ProductPrice> result = new ArrayList<>();
+        values.stream().forEach(ids-> {
+            var product =  productRepository.findByAppid(Integer.parseInt(ids));
+            product.stream().forEach(prds-> {
+                var priceInfoRep = productPriceInfoRepository.findByProduct(prds).orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME));
+                var priceInfo = new ProductPrice(prds.getName(),priceInfoRep.getType(),priceInfoRep.getIsfree(), priceInfoRep.getInitial()
+                        , priceInfoRep.getDiscountpersent(), priceInfoRep.getPrice());
+                result.add(priceInfo);
+            });
+        });
+        return result;
+    }
 
     private List<String> getItem_IDs(String item_id) {
-        String target = "%"+item_id.toUpperCase()+"%";
+        String target = item_id.toUpperCase();
         String value ="";
         List<String> values = new ArrayList<>();
-        if(NumbericCheck.isNumberric(target)) value= target;
+        if(NumbericCheck.isNumberric(target)) value= "%"+target+"%";
         else values= productRepository
                 .findAllByNameLike(target)
                 .orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME))
@@ -114,4 +159,7 @@ public class SteamService {
 
         return values;
     }
+
+
+
 }
