@@ -31,3 +31,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle
+.gitsecret/keys/random_seed
+!*.secret
+dev-ops/k8s/hgb-service-secret.yaml
