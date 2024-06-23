@@ -17,7 +17,7 @@ import org.springframework.web.server.MethodNotAllowedException;
 import java.util.Arrays;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = {"com.devjin.springstu"})
 public class GlobalExceptionController {
     @ExceptionHandler(ApiException.class)
     public ErrorCode handleApiException(ApiException ex) {return ex.getErrorCode();}
