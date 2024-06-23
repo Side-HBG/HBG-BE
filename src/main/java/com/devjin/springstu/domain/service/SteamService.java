@@ -223,21 +223,16 @@ public class SteamService {
         List<String> values = getItem_IDs(item_id);
         List<Productinfo> result = new ArrayList<>();
         values.stream().forEach(ids-> {
-            var product =  productRepository.findByAppid(Integer.parseInt(ids));
-            product.stream().forEach(prds-> {
-                System.out.println("in1");
-                try {
-                    var priceInfoRep = productPriceInfoRepository.findByProduct(prds).orElseThrow(() -> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME));
-                    System.out.println("in2");
-                    var priceInfo = new Productinfo(prds.getName(), priceInfoRep.getType(), priceInfoRep.getIsfree(), priceInfoRep.getInitial()
-                            , priceInfoRep.getDiscountpersent(), priceInfoRep.getPrice());
-                    result.add(priceInfo);
-                }
-                catch (Exception e)
-                {
-                    System.out.println(e.getMessage());
-                }
-            });
+            var product =  productRepository.findByAppid(Integer.parseInt(ids)).orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME));
+
+            var priceInfoRepOp = productPriceInfoRepository.findByProduct(product);
+            if(!priceInfoRepOp.isPresent()) return;
+
+            var priceInfoRep = priceInfoRepOp.get();
+
+            var priceInfo = new Productinfo(product.getName(), priceInfoRep.getType(), priceInfoRep.getIsfree(), priceInfoRep.getInitial()
+                    , priceInfoRep.getDiscountpersent(), priceInfoRep.getPrice());
+            result.add(priceInfo);
         });
         return result;
     }
