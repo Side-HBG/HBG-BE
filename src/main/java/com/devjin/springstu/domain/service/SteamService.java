@@ -248,7 +248,7 @@ public class SteamService {
         List<String> values = new ArrayList<>();
         if(NumbericCheck.isNumberric(target)) value= "%"+target+"%";
         else values= productRepository
-                .findAllByNameLike(target)
+                .findAllByNameLikeIgnoreCase(target)
                 .orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME))
                 .stream()
                 .map(mp->String.valueOf(mp.getAppid()))
