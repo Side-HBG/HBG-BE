@@ -6,7 +6,7 @@ node {
     DEPLOYMENT = 'hgb-backend-deploy'
     K8S_PATH = './dev-ops/k8s/'
 
-    git url: 'https://github.com/jenkinsci/git-tag-message-plugin'
+    git url: 'https://github.com/Side-HBG/HBG-BE'
     env.GIT_TAG_NAME = gitTagName()
     env.GIT_TAG_MESSAGE = gitTagMessage()
 
