@@ -13,7 +13,8 @@ sonar {
 }
 
 group 'org.springstu'
-version '0.0.9'
+//version '0.0.9'
+version '0.0.10-SNAPSHOT'
 sourceCompatibility = "21"
 
 configurations {
