@@ -65,6 +65,7 @@ pipeline{
                 script{
                     sh '''
                         kubectl apply -f ${K8S_PATH}
+                        kubectl rollout -n ${NAMESPACE} restart statefulset ${DEPLOYMENT}
                     '''
                 }
             }
