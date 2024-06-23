@@ -225,10 +225,18 @@ public class SteamService {
         values.stream().forEach(ids-> {
             var product =  productRepository.findByAppid(Integer.parseInt(ids));
             product.stream().forEach(prds-> {
-                var priceInfoRep = productPriceInfoRepository.findByProduct(prds).orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME));
-                var priceInfo = new Productinfo(prds.getName(),priceInfoRep.getType(),priceInfoRep.getIsfree(), priceInfoRep.getInitial()
-                        , priceInfoRep.getDiscountpersent(), priceInfoRep.getPrice());
-                result.add(priceInfo);
+                System.out.println("in1");
+                try {
+                    var priceInfoRep = productPriceInfoRepository.findByProduct(prds).orElseThrow(() -> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME));
+                    System.out.println("in2");
+                    var priceInfo = new Productinfo(prds.getName(), priceInfoRep.getType(), priceInfoRep.getIsfree(), priceInfoRep.getInitial()
+                            , priceInfoRep.getDiscountpersent(), priceInfoRep.getPrice());
+                    result.add(priceInfo);
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e.getMessage());
+                }
             });
         });
         return result;
@@ -245,7 +253,6 @@ public class SteamService {
                 .stream()
                 .map(mp->String.valueOf(mp.getAppid()))
                 .toList();
-
         if(values.isEmpty())
             if(value.isBlank()) throw new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME);
             else values.add(value);
