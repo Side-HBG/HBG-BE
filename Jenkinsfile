@@ -12,65 +12,63 @@ node {
     env.GIT_TAG_MESSAGE = gitTagMessage()
 
     // pipeline
-        stages {
-        stage('build test') {
-            steps {
-                // 테스트시 할 step
-                echo 'build test'
-                sh './gradlew test'
+    stage('build test') {
+        steps {
+            // 테스트시 할 step
+            echo 'build test'
+            sh './gradlew test'
+        }
+    }
+    stage('SonarQube Analysis') {
+        steps {
+            withSonarQubeEnv('sonarqube server') {
+                sh "./gradlew sonar --warning-mode all"
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube server') {
-                    sh "./gradlew sonar --warning-mode all"
+    }
+    stage('build'){
+        steps{
+            // 빌드시 할 step
+            echo 'build'
+            sh 'chmod +x gradlew'
+            sh './gradlew build'
+        }
+    }
+    stage ('docker-build'){
+        steps{
+            script{
+                dockerImage = docker.build("${DOCKER_REGISTRY}")
+            }
+        }
+    }
+    stage ('vulerability-scan'){
+        steps{
+            script{
+                sh 'sh ./dev-ops/trivy-image-scan.sh ${DOCKER_REGISTRY}'
+            }
+        }
+    }
+    stage('docker-push'){
+        steps{
+            script{
+                docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential'){
+                    dockerImage.push("${BRANCH_NAME}")
+                    dockerImage.push("latest")
                 }
+                sh '''
+                    docker system prune -f --all
+                '''
             }
         }
-        stage('build'){
-            steps{
-                // 빌드시 할 step
-                echo 'build'
-                sh 'chmod +x gradlew'
-                sh './gradlew build'
-            }
-        }
-        stage ('docker-build'){
-            steps{
-                script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}")
-                }
-            }
-        }
-        stage ('vulerability-scan'){
-            steps{
-                script{
-                    sh 'sh ./dev-ops/trivy-image-scan.sh ${DOCKER_REGISTRY}'
-                }
-            }
-        }
-        stage('docker-push'){
-            steps{
-                script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential'){
-                        dockerImage.push("${BRANCH_NAME}")
-                        dockerImage.push("latest")
-                    }
-                    sh '''
-                        docker system prune -f --all
-                    '''
-                }
-            }
-        }
+    }
 
-        stage('deploy'){
-            steps{
-                script{
-                    sh '''
-                        kubectl apply -f ${K8S_PATH}
-                        kubectl rollout -n ${NAMESPACE} restart statefulset ${DEPLOYMENT}
-                    '''
-                }
+    stage('deploy'){
+        steps{
+            script{
+                sh '''
+                    kubectl apply -f ${K8S_PATH}
+                    kubectl rollout -n ${NAMESPACE} restart statefulset ${DEPLOYMENT}
+                '''
             }
         }
     }
