@@ -223,7 +223,8 @@ public class SteamService {
         List<String> values = getItem_IDs(item_id);
         List<Productinfo> result = new ArrayList<>();
         values.stream().forEach(ids-> {
-            var product =  productRepository.findByAppid(Integer.parseInt(ids)).orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME));
+            System.out.println(ids.toString());
+            var product =  productRepository.findAllByAppid(Integer.parseInt(ids)).orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME)).getFirst();
 
             var priceInfoRepOp = productPriceInfoRepository.findByProduct(product);
             if(!priceInfoRepOp.isPresent()) return;
@@ -241,13 +242,17 @@ public class SteamService {
         String target = item_id.toUpperCase();
         String value ="";
         List<String> values = new ArrayList<>();
-        if(NumbericCheck.isNumberric(target)) value= "%"+target+"%";
-        else values= productRepository
+
+        if(NumbericCheck.isNumberric(target)) value= target;
+        else {
+            target = "%"+target+"%";
+            values= productRepository
                 .findAllByNameLikeIgnoreCase(target)
                 .orElseThrow(()-> new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME))
                 .stream()
                 .map(mp->String.valueOf(mp.getAppid()))
                 .toList();
+        }
         if(values.isEmpty())
             if(value.isBlank()) throw new ApiException(ErrorCode.STEAM_NOT_FONUD_APPNAME);
             else values.add(value);
