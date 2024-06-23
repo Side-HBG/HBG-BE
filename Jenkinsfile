@@ -1,17 +1,53 @@
+// Example usage
+node {
 
-pipeline{
-    environment{
-        // 환경변수
-        DOCKER_REGISTRY = 'vulcanos/hgb-be'
-        NAMESPACE = 'hgb-backend'
-        DEPLOYMENT = 'hgb-backend-deploy'
-        K8S_PATH = './dev-ops/k8s/'
-        BRANCH_NAME = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
-        env.GIT_TAG_NAME = gitTagName()
-        env.GIT_TAG_MESSAGE = gitTagMessage()
+    // 환경변수
+    DOCKER_REGISTRY = 'vulcanos/hgb-be'
+    NAMESPACE = 'hgb-backend'
+    DEPLOYMENT = 'hgb-backend-deploy'
+    K8S_PATH = './dev-ops/k8s/'
+
+    git url: 'https://github.com/jenkinsci/git-tag-message-plugin'
+    env.GIT_TAG_NAME = gitTagName()
+    env.GIT_TAG_MESSAGE = gitTagMessage()
+
+
+        /** @return The tag name, or `null` if the current commit isn't a tag. */
+    String gitTagName() {
+        commit = getCommit()
+        if (commit) {
+            desc = sh(script: "git describe --tags ${commit}", returnStdout: true)?.trim()
+            if (isTag(desc)) {
+                return desc
+            }
+        }
+        return null
     }
-    agent any
-    stages {
+
+    /** @return The tag message, or `null` if the current commit isn't a tag. */
+    String gitTagMessage() {
+        name = gitTagName()
+        msg = sh(script: "git tag -n10000 -l ${name}", returnStdout: true)?.trim()
+        if (msg) {
+            return msg.substring(name.size()+1, msg.size())
+        }
+        return null
+    }
+
+    String getCommit() {
+        return sh(script: 'git rev-parse HEAD', returnStdout: true)?.trim()
+    }
+
+    @NonCPS
+    boolean isTag(String desc) {
+        match = desc =~ /.+-[0-9]+-g[0-9A-Fa-f]{6,}$/
+        result = !match
+        match = null // prevent serialisation
+        return result
+    }
+
+
+        stages {
         stage('build test') {
             steps {
                 // 테스트시 할 step
