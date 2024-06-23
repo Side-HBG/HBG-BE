@@ -1,13 +1,14 @@
 FROM openjdk:21-jdk-slim-bullseye AS build-env
-COPY build/libs/*.jar /app/app.jar
+#COPY build/libs/*.jar /app/app.jar
+COPY build/libs/springbootstudy-0.0.10-SNAPSHOT.jar /app/
 WORKDIR /app
-
 
 # FROM gcr.io/distroless/java11-debian11:latest
 FROM gcr.io/distroless/java21-debian12:debug
 COPY --from=build-env /app /app
 WORKDIR /app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+#ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "springbootstudy-0.0.10-SNAPSHOT.jar"]
 
 ENV HGB_JDBC_HOST=localhost
 ENV HGB_JDBC_PORT=5432
