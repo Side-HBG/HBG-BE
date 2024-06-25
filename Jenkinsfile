@@ -7,10 +7,20 @@ pipeline{
         DEPLOYMENT = 'hgb-backend-deploy'
         K8S_PATH = './dev-ops/k8s/'
         BRANCH_NAME = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
-        BUILD_VERSION = "${env.ref_name}" // 빌드 버전
     }
     agent any
     stages {
+
+        stage('git tag') {
+            steps {
+                script {
+                    sh '''
+                        export GIT_TAG=$(git describe --tags --abbrev=0)
+                    '''
+                }
+                BUILD_VERSION = "${env.GIT_TAG}"
+            }
+
         stage('build test') {
             steps {
                 // 테스트시 할 step
@@ -63,15 +73,15 @@ pipeline{
             }
         }
 
-        stage('deploy'){
-            steps{
-                script{
-                    sh '''
-                        kubectl apply -f ${K8S_PATH}
-                        kubectl rollout -n ${NAMESPACE} restart statefulset ${DEPLOYMENT}
-                    '''
-                }
-            }
-        }
+//         stage('deploy'){
+//             steps{
+//                 script{
+//                     sh '''
+//                         kubectl apply -f ${K8S_PATH}
+//                         kubectl rollout -n ${NAMESPACE} restart statefulset ${DEPLOYMENT}
+//                     '''
+//                 }
+//             }
+//         }
     }
 }
