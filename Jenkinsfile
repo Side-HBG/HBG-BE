@@ -16,6 +16,7 @@ pipeline{
                 script {
                     sh '''
                         export GIT_TAG=$(git describe --tags --abbrev=0)
+                        env
                     '''
                 }
             }
@@ -25,6 +26,7 @@ pipeline{
                 // 테스트시 할 step
                 echo 'build test'
                 sh '''
+                    env
                     ./gradlew clean build -Pversion=$GIT_TAG-SNAPSHOT
                 '''
             }
