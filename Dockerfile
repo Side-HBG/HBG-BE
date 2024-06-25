@@ -6,6 +6,7 @@ WORKDIR /app
 FROM gcr.io/distroless/java21-debian12:debug
 ARG BUILD_VERSION
 
+ENV BUILD_VERSION=${BUILD_VERSION}
 
 COPY --from=build-env /app /app
 WORKDIR /app
