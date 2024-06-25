@@ -7,7 +7,7 @@ pipeline{
         DEPLOYMENT = 'hgb-backend-deploy'
         K8S_PATH = './dev-ops/k8s/'
         BRANCH_NAME = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
-        BUILD_VERSION = "${env.GIT_TAG_NAME ?: env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        BUILD_VERSION = "${env.GIT_TAG_NAME}"
     }
     agent any
     stages {
