@@ -39,7 +39,7 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}", "--build-arg BUILD_VERSION=${BUILD_VERSION}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}", "--build-arg BUILD_VERSION=${BUILD_VERSION} .")
                 }
             }
         }
