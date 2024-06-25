@@ -20,7 +20,7 @@ pipeline{
                 }
                 BUILD_VERSION = "${env.GIT_TAG}"
             }
-
+    }
         stage('build test') {
             steps {
                 // 테스트시 할 step
