@@ -13,7 +13,10 @@ sonar {
 }
 
 group 'org.springstudy'
-sourceCompatibility = "21"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
 
 configurations {
     compileOnly {
