@@ -1,12 +1,11 @@
 FROM openjdk:21-jdk-slim-bullseye AS build-env
-#COPY build/libs/*.jar /app/app.jar
-COPY build/libs/springbootstudy-0.0.10-SNAPSHOT.jar /app/
+COPY build/libs/*-SNAPSHOT.jar /app/
 WORKDIR /app
 
-# FROM gcr.io/distroless/java11-debian11:latest
-FROM gcr.io/distroless/java21-debian12:debug
 
+FROM gcr.io/distroless/java21-debian12:debug
 ARG BUILD_VERSION
+
 
 COPY --from=build-env /app /app
 WORKDIR /app
