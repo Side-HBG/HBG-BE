@@ -18,15 +18,14 @@ pipeline{
                         export GIT_TAG=$(git describe --tags --abbrev=0)
                     '''
                 }
-                BUILD_VERSION = "${env.GIT_TAG}"
             }
-    }
+        }
         stage('build test') {
             steps {
                 // 테스트시 할 step
                 echo 'build test'
                 sh '''
-                    ./gradlew clean build -Pversion=${BUILD_VERSION}-SNAPSHOT
+                    ./gradlew clean build -Pversion=$GIT_TAG-SNAPSHOT
                 '''
             }
         }
@@ -48,7 +47,7 @@ pipeline{
         stage ('docker-build'){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_REGISTRY}", "--build-arg BUILD_VERSION=${BUILD_VERSION}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}", "--build-arg BUILD_VERSION=$GIT_TAG")
                 }
             }
         }
