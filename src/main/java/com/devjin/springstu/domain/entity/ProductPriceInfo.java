@@ -19,17 +19,14 @@ public class ProductPriceInfo {
 
     public static final String TABLE_NAME = "PRODUCTPRICEINFO";
     public static final String COL_APPID = "APPID";
-    public static final String COL_TYPE= "TYPE";
     public static final String COL_ISFREE ="ISFREE" ;
     public static final String COL_INITIAL= "INITIAL";
     public static final String COL_DISCOUNT_PERCENT ="DISCOUNTPERCENT";
     public static final String COL_PRICE = "PRICE";
     public static final String COL_UPDATETIME = "UPDATETIME";
 
-    public ProductPriceInfo(final String type, final boolean isfree
-            , final String initial, final String discountpersent, final String price,final LocalDateTime updatetime, final Product prod, final Integer num)
-    {
-        this.type = type;
+    public ProductPriceInfo( final boolean isfree
+            , final String initial, final String discountpersent, final String price,final LocalDateTime updatetime, final Product prod, final Integer num) {
         this.isfree = isfree;
         this.initial = initial;
         this.discountpersent = discountpersent;
@@ -45,8 +42,6 @@ public class ProductPriceInfo {
     private int num;
 
 
-    @Column(name = COL_TYPE)
-    private String type;
     @Column(name = COL_ISFREE)
     private Boolean isfree;
     @Column(name= COL_INITIAL)
@@ -61,7 +56,7 @@ public class ProductPriceInfo {
 
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = Product.TABLE_NAME)
+    @JoinColumn(name = Product.TABLE_NAME, unique = true)
     private Product product;
 
 

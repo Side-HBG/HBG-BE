@@ -18,12 +18,12 @@ public class SteamController {
     public List<Price> getPrice(@RequestParam(value = "item_id") String item_id){
        var result=  streamService.getStreamIDName(item_id);
 
-       return result.stream().filter(mp-> mp !=null).map(mp-> new Price(mp.getName(),mp.getType(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice())).toList();
+       return result.stream().filter(mp-> mp !=null).map(mp-> new Price(mp.getName(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice())).toList();
     }
     @GetMapping("/pricev2")
     public List<Price> getPriceV2(@RequestParam(value = "item_id") String item_id){
         var result=  streamService.getStreamIDNameV2(item_id);
-        return result.stream().filter(mp-> mp !=null).map(mp-> new Price(mp.getName(),mp.getType(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice())).toList();
+        return result.stream().filter(mp-> mp !=null).map(mp-> new Price(mp.getName(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice())).toList();
     }
 
     @GetMapping("/saveapplist")

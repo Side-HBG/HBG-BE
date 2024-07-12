@@ -1,6 +1,7 @@
 package com.devjin.springstu.domain.service;
 
 import com.devjin.springstu.domain.Exception.ApiException;
+import com.devjin.springstu.domain.VO.AppIdCupName;
 import com.devjin.springstu.domain.VO.Productinfo;
 import com.devjin.springstu.domain.common.NumbericCheck;
 import com.devjin.springstu.domain.entity.Product;
@@ -8,16 +9,14 @@ import com.devjin.springstu.domain.entity.ProductPriceInfo;
 import com.devjin.springstu.domain.enums.ErrorCode;
 import com.devjin.springstu.domain.repository.ProductPriceInfoRepository;
 import com.devjin.springstu.domain.repository.ProductRepository;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.devjin.springstu.domain.common.SteamApiURL.appDataReqID;
@@ -34,32 +33,23 @@ public class SteamService {
         var resultJob = webService.get(getAppList);
         var applist = resultJob.getJSONObject("applist");
         var apps = applist.getJSONArray("apps");
-
-        System.out.println("start");
-
         var realData = productRepository.findAll();
-        var realappId = realData.stream().map(mp-> mp.getAppid()).toList();
+        var realappId = realData.stream().collect(Collectors.toMap(Product::getAppid,Product::getNum));
+
+        HashMap<Integer,String> getApiDatas = new HashMap<>();
+        apps.forEach(fe-> getApiDatas.put(((JSONObject)fe).getInt("appid"),((JSONObject)fe).getString("name")));
 
         var appEntityList = new ArrayList<com.devjin.springstu.domain.entity.Product>();
-        apps.forEach(fe-> appEntityList.add(new com.devjin.springstu.domain.entity
-                .Product(
-                ((JSONObject)fe).getInt("appid")
-                ,((JSONObject)fe).getString("name").toUpperCase(),
-                realappId.contains(((JSONObject)fe).getInt("appid"))
-                        ? getAppid((JSONObject) fe, realData) : null
-                )));
+        getApiDatas.forEach((fe,value)-> {
+                    appEntityList.add(new com.devjin.springstu.domain.entity.Product(fe, value,
+                            realappId.containsKey(fe) ? realappId.get(fe): null));
+                });
+
         var result = appEntityList.stream().filter(fl-> !fl.getName().isBlank()).toList();
 
         productRepository.saveAll(result);
         System.out.println("end");
         return true;
-    }
-
-    private static int getAppid(JSONObject fe, List<Product> realData) {
-        var data = realData.stream().filter(fl -> fl.getAppid() == fe.getInt("appid"))
-                .findFirst()
-                .orElseThrow(() -> new ApiException(ErrorCode.INTER_SERVER_ERROR)).getNum();
-        return data;
     }
 
     public Productinfo getJsonToPriceProduct(final String item_id)
@@ -87,15 +77,15 @@ public class SteamService {
                 // 할인없는 품목
                 if (discountPer == 0) nonDisPrice = price;
 
-                return new Productinfo(name,type,is_free, nonDisPrice, Integer.toString(discountPer), price,null);
+                return new Productinfo(name,is_free, nonDisPrice, Integer.toString(discountPer), price,null);
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                return new Productinfo(name, type,is_free,null, null, null,null);
+                return new Productinfo(name,is_free,null, null, null,null);
             }
         }
         catch (Exception e2) {
-            return new Productinfo(null,null,false,null,null,null,null);
+            return new Productinfo(null,false,null,null,null,null);
         }
     }
     public ArrayList<Productinfo> getJsonToPrice(final List<Product> products,final String strings)
@@ -128,13 +118,13 @@ public class SteamService {
                     // 할인없는 품목
                     if (discountPer == 0) nonDisPrice = price;
 
-                    result.add(new Productinfo(name.getName(),null,false, nonDisPrice, Integer.toString(discountPer), price,name));
+                    result.add(new Productinfo(name.getName(),false, nonDisPrice, Integer.toString(discountPer), price,name));
                 }
                 catch (Exception e)
                 {
                     System.out.println(e + " E1");
 
-                    result.add(new Productinfo(name.getName(),null,true,null,null,null, name));
+                    result.add(new Productinfo(name.getName(),true,null,null,null, name));
                 }
             }
         }
@@ -151,7 +141,7 @@ public class SteamService {
         datas.stream().forEach(mp->{
             var productPrice = getJsonToPriceProduct(String.valueOf(mp.getAppid()));
             if (productPrice.getName() == null) return;
-            var priceinfo = new ProductPriceInfo(productPrice.getType(),productPrice.is_free(),productPrice.getInitial()
+            var priceinfo = new ProductPriceInfo(productPrice.is_free(),productPrice.getInitial()
             ,productPrice.getDiscount_percent(),productPrice.getPrice(), LocalDateTime.now(),mp,null);
             productPriceInfoRepository.save(priceinfo);
         });
@@ -184,7 +174,7 @@ public class SteamService {
 
             try {
             var repDatas= priceResult.stream().map(mp-> new ProductPriceInfo(
-                    mp.getType(),mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice(), LocalDateTime.now()
+                    mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice(), LocalDateTime.now()
                     ,mp.getProduct()
                     ,productPriceInfoRepDatas.contains(mp.getProduct())?productPriceInfoRepository.findByProduct(mp.getProduct()).get().getNum():null
             )).toList();
@@ -231,7 +221,7 @@ public class SteamService {
 
             var priceInfoRep = priceInfoRepOp.get();
 
-            var priceInfo = new Productinfo(product.getName(), priceInfoRep.getType(), priceInfoRep.getIsfree(), priceInfoRep.getInitial()
+            var priceInfo = new Productinfo(product.getName(), priceInfoRep.getIsfree(), priceInfoRep.getInitial()
                     , priceInfoRep.getDiscountpersent(), priceInfoRep.getPrice());
             result.add(priceInfo);
         });

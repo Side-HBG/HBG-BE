@@ -31,10 +31,10 @@ public class Product {
     private int num;
 
 
-    @Column(name = COL_APPID)
+    @Column(name = COL_APPID, unique = true, nullable = false)
     private int appid;
 
-    @Column(name = COL_NAME)
+    @Column(name = COL_NAME , nullable = false)
     private String name = "";
 
 }
