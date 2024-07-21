@@ -9,6 +9,9 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product,String> {
     @Override
     Optional<Product> findById(String s);
+
+
+
     Optional<Product> findByName(String s);
     Optional<Product> findByAppid(Integer s);
     Optional<List<Product>> findAllByAppid(Integer s);

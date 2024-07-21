@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.devjin.springstu.domain.common.SteamApiURL.appDataReqID;
@@ -46,7 +47,6 @@ public class SteamService {
                 });
 
         var result = appEntityList.stream().filter(fl-> !fl.getName().isBlank()).toList();
-
         productRepository.saveAll(result);
         System.out.println("end");
         return true;
@@ -122,14 +122,11 @@ public class SteamService {
                 }
                 catch (Exception e)
                 {
-                    System.out.println(e + " E1");
-
                     result.add(new Productinfo(name.getName(),true,null,null,null, name));
                 }
             }
         }
         catch (Exception e2) {
-            System.out.println(e2 + " E2");
             return result;
         }
         return result;
@@ -153,39 +150,44 @@ public class SteamService {
         var datasTostringArray = (ArrayList<String>)datas.stream()
                 .map(mp-> String.valueOf(mp.getAppid()))
                 .collect(Collectors.toList());
-        var data250SplitString =new ArrayList<String>();
+        var splitString =new ArrayList<String>();
 
 
         StringJoiner joiner = new StringJoiner(",");
         for(int i = 0; i< datasTostringArray.size(); i++) {
             joiner.add(datasTostringArray.get(i));
-            if((i+1) % 250 ==0 || i == datasTostringArray.size() - 1){
-                data250SplitString.add(joiner.toString());
+            if((i+1) % 1000 ==0 || i == datasTostringArray.size() - 1){
+                splitString.add(joiner.toString());
                 joiner = new StringJoiner(",");
             }
         }
+        int fullLength = splitString.size();
+        AtomicInteger count = new AtomicInteger(1);
 
-        data250SplitString.stream().forEach(array -> {
-            var priceResult = getJsonToPrice(datas,array);
-            if(priceResult.stream().count() == 0) {
-                return;
-            }
-            var productPriceInfoRepDatas = productPriceInfoRepository.findAll().stream().map(mp->mp.getProduct()).toList();
+        splitString.stream().forEach(array -> {
+                var priceResult = getJsonToPrice(datas,array);
+                if(priceResult.stream().count() == 0) {
+                    return;
+                }
+                var productHashMap = productPriceInfoRepository.findAll().stream().collect(Collectors.toMap(ProductPriceInfo::getProduct,ProductPriceInfo::getNum));
+                try {
+                var repDatas= priceResult.stream().map(mp-> new ProductPriceInfo(
+                        mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice(), LocalDateTime.now()
+                        ,mp.getProduct()
+                        ,productHashMap.containsKey(mp.getProduct())? productHashMap.get(mp.getProduct()) : null
+                )).toList();
 
-            try {
-            var repDatas= priceResult.stream().map(mp-> new ProductPriceInfo(
-                    mp.is_free(),mp.getInitial(),mp.getDiscount_percent(),mp.getPrice(), LocalDateTime.now()
-                    ,mp.getProduct()
-                    ,productPriceInfoRepDatas.contains(mp.getProduct())?productPriceInfoRepository.findByProduct(mp.getProduct()).get().getNum():null
-            )).toList();
+                productPriceInfoRepository.saveAll(repDatas);
 
-            productPriceInfoRepository.saveAll(repDatas);
-
+                System.out.println("("+count.getAndAdd(1)+"/"+fullLength+")");
                 Thread.sleep(1500);
-                System.out.println("Sleep....");
-            } catch (InterruptedException e) {
+
+            }
+            catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }catch (InvalidDataAccessApiUsageException e2) {
+            }
+            catch (Exception e){
             }
         });
 
