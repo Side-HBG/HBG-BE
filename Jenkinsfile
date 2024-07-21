@@ -12,7 +12,7 @@ pipeline{
                 script:'git describe --tags --abbrev=0 | tr -d \'\12\''
             )}"""
     }
-    agent any
+    agent nexus
     stages {
         stage('build test') {
             steps {
