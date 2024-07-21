@@ -6,12 +6,15 @@ pipeline{
         NAMESPACE = 'hgb-backend'
         DEPLOYMENT = 'hgb-backend-deploy'
         K8S_PATH = './dev-ops/k8s/'
+        DOCKER_REPOSITORY = 'https://nexus-service.nexus3.svc.cluster.local:5443'
         BUILD_VERSION = """${sh(
                 returnStdout:true,
                 script:'git describe --tags --abbrev=0 | tr -d \'\12\''
             )}"""
     }
-    agent any
+    agent {
+        label "nexus-jenkins"
+    }
     stages {
         stage('build test') {
             steps {
@@ -53,7 +56,7 @@ pipeline{
         stage('docker-push'){
             steps{
                 script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential'){
+                    docker.withRegistry("${DOCKER_REPOSITORY}", 'docker-nexus-credential'){
                         dockerImage.push("${BRANCH_NAME}")
                         dockerImage.push("latest")
                     }
