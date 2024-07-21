@@ -12,7 +12,9 @@ pipeline{
                 script:'git describe --tags --abbrev=0 | tr -d \'\12\''
             )}"""
     }
-    agent nexus
+    agent {
+        label "nexus-jenkins"
+    }
     stages {
         stage('build test') {
             steps {
