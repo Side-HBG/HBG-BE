@@ -32,6 +32,7 @@ public class WebService {
                 HttpEntity entity = response.getEntity();
 
                 JSONObject job = new JSONObject(EntityUtils.toString(entity));
+
                 return job;
             }
 
